@@ -140,12 +140,25 @@ CREATE TABLE IF NOT EXISTS `user` (
   `zip` varchar(255) default NULL,
   `phone` varchar(255) default NULL,
   `date` int(11) NOT NULL,
-  `admin` int(11) NOT NULL,
   `active` tinyint(4) NOT NULL default '1',
   PRIMARY KEY  (`user_id`)
 );
 
+CREATE TABLE IF NOT EXISTS `group` (
+  `group_id` int(11) unsigned NOT NULL auto_increment,
+  `groupname` varchar(40) NOT NULL,
+	PRIMARY KEY  (`group_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `user_group` (
+  `ug_id` int(11) unsigned NOT NULL auto_increment,
+  `fiuser_id` int(11) unsigned NOT NULL,
+  `figroup_id` int(11) unsigned NOT NULL,
+	PRIMARY KEY  (`ug_id`)
+);
+
 TRUNCATE TABLE `config`;
+TRUNCATE TABLE `group`;
 TRUNCATE TABLE `invoice_config`;
 TRUNCATE TABLE `email_templates`;
 TRUNCATE TABLE `payment_gateway`;
@@ -158,6 +171,10 @@ INSERT INTO `payment_gateway` (`payment_gateway_id`, `payment_gateway_name`, `pa
 (5, 'alertpay', '', 0),
 (6, 'alertpay_subscribe', '', 0),
 (7, 'moneybookers', '', 0);
+
+INSERT INTO `group` (`group_id`,`groupname`) VALUES
+(1,`admin`),
+(2,`user`);
 
 INSERT INTO `invoice_config` (`company`, `contact`, `address`, `phone`, `email`) VALUES
 ('Your company name', 'Billing Department', 'Your company address', 'Your company phone', 'Your company email');

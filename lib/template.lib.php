@@ -3,9 +3,7 @@
 /**
  * $Id:$
  * Proxy for Smarty
- * @author David Raison <david@hackerspace.lu>
  * @version 0.4.1
- * @license GPLv3
  */
 
 include dirname(__FILE__) . "/smarty/Smarty.class.php";

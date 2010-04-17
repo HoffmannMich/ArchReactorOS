@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+define ('DS',DIRECTORY_SEPARATOR);
 define ('DB_USER','<%$dbUsername%>');
 define ('DB_PWD','<%$dbPassword%>');
 define ('DB_HOST','<%$dbHostname%>');
@@ -13,11 +14,15 @@ include CFG_SITE_PATH.'lib/template.lib.php';
 include CFG_SITE_PATH.'lib/adodb5/adodb.inc.php';
 include CFG_SITE_PATH.'lib/phpmailer/class.phpmailer.php';
 include CFG_SITE_PATH.'lib/functions.php';
-
-// replace the following by an autoload function
-// (see http://github.com/chrwei/ArchReactorOS/issues/issue/21)
-include CFG_SITE_PATH.'lib/dispatcher.class.php';
 include CFG_SITE_PATH.'lib/form_validation.lib.php';
+
+/**
+ * replaced the following by an autoload function
+ * (see http://github.com/chrwei/ArchReactorOS/issues/issue/21)
+ * and the functions.php file
+ * Remove in a future revision
+ * *
+include CFG_SITE_PATH.'lib/dispatcher.class.php';
 include CFG_SITE_PATH.'lib/user.class.php';
 include CFG_SITE_PATH.'lib/email.class.php';
 include CFG_SITE_PATH.'lib/product.class.php';
@@ -26,7 +31,8 @@ include CFG_SITE_PATH.'lib/banned.class.php';
 include CFG_SITE_PATH.'lib/coupon.class.php';
 include CFG_SITE_PATH.'lib/payment.class.php';
 include CFG_SITE_PATH.'lib/invoice.class.php';
-include CFG_SITE_PATH.'lib/extension_controller.class.php';
+include CFG_SITE_PATH.'lib/extensioncontroller.class.php';
+*/
 
 // required everywhere
 $db = ADONewConnection('mysql');
@@ -38,7 +44,7 @@ $tpl        = new Template;
 $mail       = new Email;
 $dispatcher = Dispatcher::Instance();
 
-// not required everywhere
+// not required everywhere, should be removed
 $user       = new User;
 $product    = new Product;
 $order      = new Order;
@@ -101,6 +107,6 @@ elseif (!ini_get('register_globals')) {
   if (!empty($_COOKIE)) safe_extract($_COOKIE);
 }
 
-// Done with setup.. let extensions know
-$dispatcher->trigger('onSystemInitialised');
+// Done with setup.. let listeners know
+$dispatcher->trigger('onSystemInitialized');
 ?>

@@ -389,16 +389,25 @@ function ExecuteSQL($file) {
 	";
 	$dbConn->Execute($query);
 
+	// Add admin users
 	$query= "
 	INSERT INTO `user` 
 	(`user_id`, `username`, `password`, 
 	`firstname`, `lastname`, `email`, 
 	`address1`, `address2`, `city`, `state`, `zip`, 
-	`phone`, `date`, `admin`, `active`) 
+	`phone`, `date`, `active`) 
 	VALUES 
 	(1, 'admin', md5('adminpw'), 'Administrator', 
 	'Administrator', '$site_mail', 
-	'', '', '', '', '', '', ".time().", 1, 1);
+	'', '', '', '', '', '', ".time().", 1);
+	";
+	$dbConn->Execute($query);
+	// Set usergroup for admin user
+	$query = "
+	INSERT INTO `user_group` 
+	(`ug_id`,`fiuser_id`,`figroup_id`) 
+	VALUES
+	(1,1,1);
 	";
 	$dbConn->Execute($query);
 	

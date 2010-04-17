@@ -1,4 +1,24 @@
 <?php
+class Admin extends User {
+	public function __construct(){
+		parent::__construct();
+	}
+	
+	/**
+	 * Redirect to the frontpage if the current user is not an admin user
+	 * @note (SESSION_ADMIN_AUTHENTICATED was set by $user->Login()
+	 * In fact, it would suffice to check for SESSION vars
+	 * See also the 4 almost identical methods below
+	 */
+	public function authenticate() {
+		parent::AuthenticationUser();
+		if ($_SESSION['SESSION_ADMIN_AUTHENTICATED'] != 1) {
+			header("Location: ".CFG_SITE_URL);
+		}
+	}
+	
+}
+
 class User {
 	
 	public function __construct(){
@@ -43,17 +63,12 @@ class User {
 			return false;	
 	}
 	
+	/**
+	 * Remove 
+	 * Identical to GetActiveUserData() from below
+	 * */
 	function CheckUserLogin($username) {
-		global $db;
-		
-		$query = "select * from user where username = '".mysql_real_escape_string($username)."'";
-		$result = $db->Execute($query);
-		$rows = $result->GetRows();
-		return $rows;
-		if ($rows) 
-			return true;
-		else	
-			return false;	
+		return $this->GetActiveUserData($username)
 	}
 
 	function CheckEmailExist($email) {
@@ -65,7 +80,10 @@ class User {
 		return $rows;	
 	}
 	
-	
+	/**
+	 * The following 4 methods all do the same thing
+	 * What for?
+	 */
 	function CheckPasswordLogin($username,$password) {
 		global $db;
 		
@@ -82,7 +100,6 @@ class User {
 		global $db;
 
 		// get password
-
 		$query	= "select password, admin from user where active=1 and username = '".mysql_real_escape_string($username)."'";
 		$result = $db->Execute($query);
 		$user	 = $result->FetchRow();
@@ -105,12 +122,10 @@ class User {
 			return $user['admin'];
 		}
 	}
-
-	function Logout() {
-		session_unset();
-		session_destroy();
-	}
 		
+	/**
+	 * To be replaced by Admin->authenticate()
+	 * */
 	function AuthenticationAdmin() {
 		global $db;
 		$query	= "select user_id, admin from user where active=1 AND username = '".mysql_real_escape_string($_SESSION['SESSION_USERNAME'])."' and password = '".md5($_SESSION['SESSION_PASSWORD'])."'";
@@ -136,6 +151,11 @@ class User {
 		if (!$user['user_id']) {
 			header("Location: ".CFG_SITE_URL."/login.php?b={$_SERVER['REQUEST_URI']}");
 		}
+	}
+	
+	function Logout() {
+		session_unset();
+		session_destroy();
 	}
 	
 	function GetUsersSearchResult($search_for,$search_in)
@@ -177,6 +197,7 @@ ORDER BY
 		$result = $db->Execute($query);
 		return $result->GetRows();
 	}
+	
 	function GetUserTotal() {
 		global $db;
 		
@@ -185,6 +206,7 @@ ORDER BY
 		$total = $result->FetchRow();
 		return $total['total'];
 	}
+	
 	function GetAllUsers() {
 		global $db;
 		
