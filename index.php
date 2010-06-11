@@ -1,4 +1,5 @@
 <?php
+echo "test";
 include 'init.php';
 $user->AuthenticationUser();
 
