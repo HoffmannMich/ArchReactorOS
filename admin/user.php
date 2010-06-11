@@ -1,6 +1,45 @@
 <?php
 include '../init.php';
 
+/*###########################################################
+Section : Main
+###########################################################*/
+$user->AuthenticationAdmin();
+
+switch($_REQUEST['pf']){
+	default:	//fall-through
+	case 'browse':
+		ShowAllUsers();
+		ShowFormAllUsers();
+	break;
+	case 'detail':
+		ShowDetailUser();
+		ShowFormDetailUser();
+	break;
+	case 'delete':
+		DeleteUser($_REQUEST['delete']);
+	break;
+	case 'add':
+		if ($_REQUEST['process'] == 'add')
+			AddUser();
+		else ShowFormAddUser();
+	break;
+	case 'add_order':
+		GetPaymentCurrency();
+		if ($_REQUEST['process'] == 'add_order') 
+			ProcessAddOrder();
+		else ShowFormAddOrder();
+	break;
+	case 'search':
+		ShowSearchResult() ;
+		ShowFormSearchResult();
+	break;
+}
+
+/**
+ * Functions
+ * */
+
 function ShowFormAllUsers() {
   global $tpl, $users, $success, $paging;
   
@@ -187,35 +226,20 @@ function ShowDetailUser()
 	}
 }
 
-function DeleteUser($user_id_list) 
-{
+function DeleteUser($user_id_list) {
   global $tpl, $user, $success;
   
-  $delete_admin = false;
-  for($i=0;$i<=count($user_id_list);$i++)
-  {
-    if($user_id_list[$i] != 1)
-    {
-      $user->Delete($user_id_list[$i]);
-    }
-    else
-    {
-      $delete_admin = true;
-    }
-  }
-  $file_htgroup   = CFG_DATA_PATH.'.htgroup';
-  $file_htpasswd  = CFG_DATA_PATH.'.htpasswd';
-  //GenerateHtgroup($file_htgroup);
-  //GenerateHtpasswd($file_htpasswd);
+	$delete_admin = false;
+	for($i=0;$i<=count($user_id_list);$i++) {
+		if($user_id_list[$i] != 1)
+			$user->Delete($user_id_list[$i]);
+		else $delete_admin = true;
+	}
+	$file_htgroup   = CFG_DATA_PATH.'.htgroup';
+	$file_htpasswd  = CFG_DATA_PATH.'.htpasswd';
   
-  if($delete_admin)
-  {
-    header("Location: user.php?pf=browse&delete_admin=true");
-  }
-  else
-  {
-    header("Location: user.php?pf=browse&success=true");
-  }
+	if($delete_admin) header("Location: user.php?pf=browse&delete_admin=true");
+	else header("Location: user.php?pf=browse&success=true");
 }
 
 function ShowFormAddUser() {
@@ -460,50 +484,5 @@ function paging($total_data,$total_data_in_page)
     return $paging;
   }
 }
-/*###########################################################
-Section : Main
-###########################################################*/
-$user->AuthenticationAdmin();
 
-if (empty($_REQUEST['pf']) || $_REQUEST['pf'] == 'browse') 
-{
-  ShowAllUsers();
-  ShowFormAllUsers();
-}
-elseif ($_REQUEST['pf'] == 'detail') 
-{
-  ShowDetailUser();
-  ShowFormDetailUser();
-}
-elseif ($_REQUEST['pf'] == 'delete') {
-  DeleteUser($_REQUEST['delete']);
-}
-elseif ($_REQUEST['pf'] == 'add' ) 
-{
-  if ($_REQUEST['process'] == 'add') 
-  {
-    AddUser();
-  }
-  else 
-  {
-    ShowFormAddUser();
-  }
-}
-elseif ($_REQUEST['pf'] == 'add_order')
-{
-  GetPaymentCurrency();
-  if ($_REQUEST['process'] == 'add_order') 
-  {
-    ProcessAddOrder();
-  }
-  else 
-  {
-    ShowFormAddOrder();
-  }
-}
-elseif ($_REQUEST['pf'] == 'search')
-{
-  ShowSearchResult() ;
-  ShowFormSearchResult();
-}
 ?>

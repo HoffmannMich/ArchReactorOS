@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+define ('DS',DIRECTORY_SEPARATOR);
 define ('DB_USER','<%$dbUsername%>');
 define ('DB_PWD','<%$dbPassword%>');
 define ('DB_HOST','<%$dbHostname%>');
@@ -14,6 +15,14 @@ include CFG_SITE_PATH.'lib/adodb5/adodb.inc.php';
 include CFG_SITE_PATH.'lib/phpmailer/class.phpmailer.php';
 include CFG_SITE_PATH.'lib/functions.php';
 include CFG_SITE_PATH.'lib/form_validation.lib.php';
+
+/**
+ * replaced the following by an autoload function
+ * (see http://github.com/chrwei/ArchReactorOS/issues/issue/21)
+ * and the functions.php file
+ * Remove in a future revision
+ * *
+include CFG_SITE_PATH.'lib/dispatcher.class.php';
 include CFG_SITE_PATH.'lib/user.class.php';
 include CFG_SITE_PATH.'lib/email.class.php';
 include CFG_SITE_PATH.'lib/product.class.php';
@@ -22,7 +31,10 @@ include CFG_SITE_PATH.'lib/banned.class.php';
 include CFG_SITE_PATH.'lib/coupon.class.php';
 include CFG_SITE_PATH.'lib/payment.class.php';
 include CFG_SITE_PATH.'lib/invoice.class.php';
+include CFG_SITE_PATH.'lib/extensioncontroller.class.php';
+*/
 
+// required everywhere
 $db = ADONewConnection('mysql');
 $db->Connect(DB_HOST, DB_USER, DB_PWD, DB_NAME);
 $db->debug = false;
@@ -30,6 +42,9 @@ $ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
 
 $tpl        = new Template;
 $mail       = new Email;
+$dispatcher = Dispatcher::Instance();
+
+// not required everywhere, should be removed
 $user       = new User;
 $product    = new Product;
 $order      = new Order;
@@ -91,4 +106,7 @@ elseif (!ini_get('register_globals')) {
   if (!empty($_POST)) safe_extract($_POST);
   if (!empty($_COOKIE)) safe_extract($_COOKIE);
 }
+
+// Done with setup.. let listeners know
+$dispatcher->trigger('onSystemInitialized');
 ?>

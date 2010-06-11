@@ -1,4 +1,15 @@
 <?php
+/**
+ * Autoload function
+ * Automatically require files that contain Core Controllers and Models
+ * @param $packageName The name of class to load.
+ * @return success of require_once
+ */
+function __autoload($packageName){
+	$class_name = strtolower($packageName);	// was: fromCamelCase()
+	$path = CFG_SITE_PATH.'lib'.DS.$class_name.'class.php';
+	return(require_once $path);
+}
 
 function GetConfig() {
   global $db;
@@ -247,5 +258,14 @@ function createRandomPassword($length) {
         $i++;
     }
     return $pass;
+}
+
+/**
+ * Easing development
+ */
+function myVarDump(){
+	print('<pre>');
+	var_dump(func_get_args());
+	print('</pre>');
 }
 ?>
